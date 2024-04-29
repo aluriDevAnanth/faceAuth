@@ -19,8 +19,7 @@ app.use(cors())
 faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
 
 const faceDetectionOptions = new faceapi.SsdMobilenetv1Options({
-  minConfidence: 0.5, // Minimum confidence threshold
-  // Add other options as needed
+  minConfidence: 0.5,
 });
 
 const storage = multer.diskStorage({
@@ -124,7 +123,6 @@ app.post('/api/signup', upload.single('photo'), async (req, res) => {
   try {
     const { email, pass } = req.body;
     const photoPath = req.file.path;
-    //console.log(1, req.body, photoPath);
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -143,16 +141,15 @@ app.post('/api/signup', upload.single('photo'), async (req, res) => {
 });
 
 app.get('/api/auth', async (req, res) => {
-  let token;
-  const authHeader = req.headers["authorization"];
-  if (authHeader !== undefined) {
-    token = authHeader.split(" ")[1];
-  }
-
   try {
+    let token;
+    const authHeader = req.headers["authorization"];
+    if (authHeader !== undefined) {
+      token = authHeader.split(" ")[1];
+    }
+
     if (token) {
       const { id } = jwt.verify(token, 'qwertyuiop');
-      //console.log(id)
       try {
         const user = await User.findOne({ _id: id });
         res.status(200).json({ success: true, data: { user } });
@@ -162,7 +159,6 @@ app.get('/api/auth', async (req, res) => {
       }
     } else res.json({ success: false, error: 'error' });
   } catch (error) {
-    //res.json({ success: false, error: 'Server error' });
     console.error(error);
   }
 
@@ -171,7 +167,7 @@ app.get('/api/auth', async (req, res) => {
 const start = async () => {
   try {
     await mongoose.connect('mongodb://localhost:27017/faceauth');
-    await loadModels(); // Load face-api.js models
+    await loadModels();
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
