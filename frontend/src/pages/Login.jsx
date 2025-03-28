@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from 'react';
+import { useState, useRef, useContext } from 'react';
 import * as Yup from 'yup';
 import Webcam from 'react-webcam';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
@@ -29,18 +29,24 @@ export default function Login() {
 
   const handleLoginSubmit = async (values, setSubmitting) => {
     const photo = webcamRef.current.getScreenshot();
-    const q = { ...values, photo }
+    const blob = await fetch(photo).then(res => res.blob());
+
+    const q = { ...values }
     const formData = new FormData();
     for (const name in q) {
       formData.append(name, q[name]);
     }
+    formData.append('photo', blob, 'webcam-capture.jpg');
+
     const response = await fetch('http://localhost:3000/api/login', {
       method: 'POST',
       body: formData
     });
     const res = await response.json();
+
     console.log(res);
-    if (!res.success) setError(res.error)
+
+    if (!res.success) { setError(res.error); setSubmitting(false); }
     else {
       const { _distance } = res.data.matches;
 
@@ -67,13 +73,13 @@ export default function Login() {
     for (const name in q) {
       formData.append(name, q[name]);
     }
-    console.log(q);
+
     const response = await fetch('http://localhost:3000/api/signup', {
       method: 'POST',
       body: formData
     })
-    const res = await response.json();
-    console.log(res);
+    await response.json();
+
     setView(22)
   };
 

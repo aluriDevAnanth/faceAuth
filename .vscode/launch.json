@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "compounds": [
+    {
+      "name": "Debug FaceAuth",
+      "configurations": ["Run Backend", "Run Frontend"]
+    }
+  ],
+  "configurations": [
+    {
+      "name": "Run Backend",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "args": ["run", "dev"],
+      "cwd": "${workspaceFolder}/backend",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Run Frontend",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "args": ["run", "dev"],
+      "cwd": "${workspaceFolder}/ppfrontend",
+      "console": "integratedTerminal"
+    }
+  ]
+}
